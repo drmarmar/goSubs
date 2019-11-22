@@ -7,16 +7,15 @@ import (
 	"io/ioutil"
 	"log"
 	//	"net/url"
-//	"fmt"
-//	"log"
 	"net/http"
-//	"time"
+	//	"time"
 )
 
 
 func main() {
-	getRequest()
+	//getRequest()
 	//MakeRequest()
+	getRequest2("tevora.com")
 }
 
 type wayurl struct {
@@ -52,6 +51,40 @@ func getRequest() ([]wayurl, error) {
 
 	return out, nil
 }
+
+func getRequest2(domain string) ([]wayurl, error) {
+	resp, err := http.Get( "http://web.archive.org/cdx/search/cdx?url=*.tevora.com/*&output=json&fl=original&collapse=urlkey")
+	if err != nil {
+		log.Fatal("Error getting response. ", err)
+	}
+	defer resp.Body.Close()
+
+	// make slice with 0 length and no cap. An empty slice.
+	output := make([]wayurl, 0)
+
+	decode := json.NewDecoder(resp.Body)
+
+/*	// create a composite literal of type struct{}. Costs no memory.
+	wrapper := struct {
+		url string
+	}{} */
+
+	// make empty slice holding slice
+	var wrapper [][]string
+
+	err = decode.Decode(&wrapper)
+	if err != nil {
+		return []wayurl{}, err
+	}
+
+	for _, urls := range wrapper {
+		output = append(output,wayurl{url: urls[0]})
+	}
+	fmt.Printf("%s\n", output)
+	return output, nil
+
+}
+
 
 func MakeRequest() {
 
