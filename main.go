@@ -16,11 +16,20 @@ func main() {
 	//getRequest()
 	//MakeRequest()
 	getRequest2("tevora.com")
+
+	// 	enable this once stdin is accepted as function argument.
+	//	execFns := []execFn{getRequest2, getRequest}
+
+	fmt.Println("%s\n", &wayurl{})
+
 }
 
 type wayurl struct {
 	url	string
 }
+
+// first class function
+//type execFn func(string, bool) ([]wayurl, error)
 
 func getRequest() ([]wayurl, error) {
 	resp, err := http.Get( "http://web.archive.org/cdx/search/cdx?url=*.tevora.com/*&output=json&fl=original&collapse=urlkey")
@@ -80,7 +89,7 @@ func getRequest2(domain string) ([]wayurl, error) {
 	for _, urls := range wrapper {
 		output = append(output,wayurl{url: urls[0]})
 	}
-	fmt.Printf("%s\n", output)
+	//fmt.Printf("%s\n", output)
 	return output, nil
 
 }
